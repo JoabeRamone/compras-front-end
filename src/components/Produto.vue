@@ -40,8 +40,8 @@
               </b-button>
             </template>
           </b-table>
-          <!--BOTAO VOLTAR PARA CATEGORIA-->
         </div>
+        <!--BOTAO VOLTAR PARA CATEGORIA-->
         <div class="botao-cadastro ">
           <b-input-group-append>
             <b-button class="botao-voltar-para-categoria"
@@ -317,10 +317,6 @@
 
   .botao-criar-categoria {
     background-color: green;
-  }
-
-  .botao-voltar-para-categoria {
-    background-color: red;
   }
 
   .grupo-botao-modal {

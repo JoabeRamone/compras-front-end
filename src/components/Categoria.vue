@@ -14,7 +14,7 @@
 
         </div>
         <!--TABELA-->
-        <div style="height: 350px">
+        <div style="height: 330px">
           <b-table class="hover"
                    :items="corpoDaCategoria"
                    :fields="campoParaColunasDaCategoria"
@@ -65,8 +65,14 @@
           </b-row>
         </div>
         <!--BOTAO VOLTAR-->
-        <div class="botao-cadastro">
-          <b-button variant="danger">Voltar</b-button>
+        <div class="botao-voltar ">
+          <b-input-group-append>
+            <b-button class="botao-voltar-para-categoria"
+                      v-b-modal.modal-cadastrar
+                      to="/"
+            ><i class="fas fa-arrow-alt-circle-left"></i>
+            </b-button>
+          </b-input-group-append>
         </div>
       </b-card>
     </b-container>
@@ -314,6 +320,12 @@
   .botao-cadastro {
     float: right;
     margin-bottom: 2%;
+  }
+
+  .botao-voltar {
+    float: right;
+    position: relative;
+    margin-top: -41px;
   }
   .titulo-tabela {
     float: left;
