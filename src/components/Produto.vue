@@ -3,7 +3,6 @@
     <b-container class="col-md-6 offset-3" fluid>
       <b-card class="card" bg-variant="dark" text-variant="white">
         <h2 class="titulo-tabela">Categoria: {{corpoDosProdutos.nome}}</h2>
-        <!--CADASTRAR PRODUTO-->
         <div class="botao-cadastro">
           <b-input-group-append>
             <b-button class="botao-criar-categoria"
@@ -12,26 +11,27 @@
             </b-button>
           </b-input-group-append>
         </div>
-        <div style="height: 350px">
+        <!---------------------------------------------------------------------------------------------------->
+        <div style="">
           <b-table class="hover"
+                   show-empty
                    :items="corpoDosProdutos.produtos"
                    :fields="campoParaColunasDosProdutos"
-                   :current-page="currentPage"
+                   :current-page="paginaAtual"
                    @filtered="onFiltered(item)"
-                   :per-page="perPage">
+                   :per-page="porPagina">
 
-            <template slot="preco" slot-scope="row">
-              <p>{{corpoDosProdutos.produtos[row.index].preco}}</p>
+            <template  slot="preco" slot-scope="row">
+              <div>R$: {{row.item.preco}}</div>
             </template>
+
             <template slot="ação" slot-scope="row">
-              <!--BOTAO PARA ATUALIZAR PRODUTO-->
               <b-button v-b-modal.modal-editar
                         title="Editar Categoria"
                         class="botao-produtos"
                         variant="outline-primary"
                         @click="mandaValorDaLinhaParaModal(row.item)"><i class="fas fa-edit"></i>
               </b-button>
-              <!--BOTAO PARA EXCLUIR PRODUTO-->
               <b-button v-b-modal.modal-excluir
                         title="Excluir Produto"
                         class="botao-produtos"
@@ -41,53 +41,76 @@
             </template>
           </b-table>
         </div>
-        <!--BOTAO VOLTAR PARA CATEGORIA-->
-        <div class="botao-cadastro ">
-          <b-input-group-append>
-            <b-button class="botao-voltar-para-categoria"
-                      v-b-modal.modal-cadastrar
-                      to="/categorias"
-            ><i class="fas fa-arrow-alt-circle-left"></i>
-            </b-button>
-          </b-input-group-append>
-        </div>
+        <!---------------------------------------------------------------------------------------------------->
+        <div style="">
 
-
-        <!--PAGINAS-->
-        <div class="barra-de-paginas">
           <b-row>
             <b-col md="6" class="my-1">
               <b-pagination
-                v-model="currentPage"
-                :total-rows="totalRows"
-                :per-page="perPage"
+                v-model="paginaAtual"
+                :total-rows="totalDeLinhas"
+                :per-page="porPagina"
                 class="my-0"
               ></b-pagination>
+
             </b-col>
+            <b-input-group-append class="botao-voltar">
+              <b-button class="botao-voltar-para-categoria"
+                        v-b-modal.modal-cadastrar
+                        to="/categorias"
+              ><i class="fas fa-arrow-alt-circle-left"></i>
+              </b-button>
+            </b-input-group-append>
+
           </b-row>
+
+
         </div>
+
       </b-card>
     </b-container>
-    <!--MODAL CADASTRAR-->
     <div>
       <b-modal id="modal-cadastrar" title="Cadastrar Produto" hide-footer ref="modal-cadastrar-produto">
         <div>
           <b-form @submit="cadastrarProduto" @reset="limparInputDoModal">
             <b-form-group class="col-md-6 offset-3"
                           label-for="input-1"
-                          description="Não coloque nome inapropriado.">
+                          description="Não coloque nome inapropriado."
+
+                          v-model="produto.nome">
               <b-form-input
                 type="text"
+                disable="number"
                 required
                 placeholder="Nome do Produto"
                 v-model="produto.nome"></b-form-input>
+              <div v-show="true">
+
+                <b-form-invalid-feedback :state="validation">
+                  <i class="fas fa-times"></i> O Nome do Produto não pode ultrapassar do que 19 Caracteres.
+                </b-form-invalid-feedback>
+                <b-form-valid-feedback :state="validation">
+                  <i class="fas fa-check"></i> Válido.
+                </b-form-valid-feedback>
+
+              </div>
+
               <br>
-              <b-form-input
-                type="text"
-                required
-                placeholder="Preço do Produto"
-                v-model="produto.preco"></b-form-input>
+              <div>
+                <money class="form-control" :state="validationPreco"
+                       v-model="produto.preco" v-bind="money"></money>
+              </div>
+
+              <b-form-valid-feedback :state="validationPreco">
+                <i class="fas fa-check"></i> Válido.
+              </b-form-valid-feedback>
+
+              <b-form-invalid-feedback :state="validationPreco">
+                <i class="fas fa-times"></i> O preço não pode ser negativo.
+              </b-form-invalid-feedback>
+
             </b-form-group>
+
             <div class="grupo-botao-modal">
               <b-button type="reset" variant="danger" @click="fecharModal(2)">Cancelar</b-button>
               <b-button type="submit" variant="success">Pronto</b-button>
@@ -96,7 +119,6 @@
         </div>
       </b-modal>
     </div>
-    <!--MODAL-ATUALIZAR-->
     <div>
       <b-modal id="modal-editar" title="Atualizar Produto" hide-footer ref="modal-atualizar-produto">
         <div>
@@ -106,21 +128,32 @@
               label="Nome: "
               label-for="input-1"
               description="Não coloque nome inapropriado.">
-              <b-form-input
-                type="text"
-                required
-                placeholder=""
-                v-model="produto.nome"
-              ></b-form-input>
+              <div>
+                <b-form-input type="text" required v-model="produto.nome"></b-form-input>
+                <b-form-invalid-feedback :state="validation">
+                  <i class="fas fa-times"></i> O Nome do Produto não pode ultrapassar do que 19 Caracteres.
+                </b-form-invalid-feedback>
+                <b-form-valid-feedback :state="validation">
+                  <i class="fas fa-check"></i> Válido.
+                </b-form-valid-feedback>
+              </div>
               <br>
               <p>Preço:</p>
-              <b-form-input
-                type="text"
-                required
-                v-model="produto.preco"
-              ></b-form-input>
-            </b-form-group>
+              <div>
+                <money class="form-control"
+                       v-model="produto.preco" v-bind="money"></money>
 
+                <b-form-valid-feedback :state="validationPreco">
+                  <i class="fas fa-check"></i> Válido.
+                </b-form-valid-feedback>
+
+                <b-form-invalid-feedback :state="validationPreco">
+                  <i class="fas fa-times"></i> O preço não pode ser negativo.
+                </b-form-invalid-feedback>
+              </div>
+
+
+            </b-form-group>
             <div class="grupo-botao-modal">
               <b-button type="reset"
                         variant="danger"
@@ -136,13 +169,11 @@
         </div>
       </b-modal>
     </div>
-    <!--MODAL EXCLUIR-->
     <div>
       <b-modal id="modal-excluir" title="Excluir Produto" hide-footer ref="modal-excluir-produto">
         <div>
           <b-form @submit="excluirProduto" @reset="limparInputDoModal">
             <p>Deseja mesmo excluir o Produto {{produto.nome}} ?</p>
-
             <div class="grupo-botao-modal">
               <b-button type="reset" variant="danger" @click="fecharModal(3)">Cancelar</b-button>
               <b-button type="submit" variant="success">Pronto</b-button>
@@ -151,7 +182,6 @@
         </div>
       </b-modal>
     </div>
-    <!--ALERT SUCESSO-->
     <div style="position: absolute;right: 10px;top: 10px;z-index: 100000">
       <b-alert
         :show="alertSucesso"
@@ -159,12 +189,11 @@
         variant="success"
         @dismissed="alertSucesso=0"
         @dismiss-count-down="setSegundos">
-        <p v-show="flagSalvar">Produto salva com sucesso!</p>
-        <p v-show="flagExcluir">Produto Excluida com sucesso!</p>
-        <p v-show="flagAtualizar">Produto Atualizada com sucesso!</p>
+        <p v-show="flagSalvar">Produto salvo com sucesso!</p>
+        <p v-show="flagExcluir">Produto Excluido com sucesso!</p>
+        <p v-show="flagAtualizar">Produto Atualizado com sucesso!</p>
       </b-alert>
     </div>
-    <!--ALERT ERROR-->
     <div style="position: absolute;right: 10px;top: 10px;z-index: 100000">
       <b-alert
         :show="alertError"
@@ -179,22 +208,23 @@
 </template>
 
 <script>
-
+  import {Money} from 'v-money'
 
   export default {
+    components: {Money},
     name: "produto",
     data() {
       return {
-        totalRows: 1,
-        currentPage: 1,
-        perPage: 4,
+        totalDeLinhas: 1,
+        paginaAtual: 1,
+        porPagina: 4,
         categoriaId: '',
         corpoDosProdutos: [],
-        campoParaColunasDosProdutos: [{key: 'nome'}, {key: 'preco'}, {key: 'ação'}],
+        campoParaColunasDosProdutos: [{key: 'nome'}, {key: 'preco', label: 'Preço'}, {key: 'ação'}],
         produto: {
           id: '',
           nome: '',
-          preco: null
+          preco: 0
         },
         mensagem: '',
         dismissSecs: 10,
@@ -202,28 +232,63 @@
         alertError: 0,
         flagSalvar: false,
         flagExcluir: false,
-        flagAtualizar: false
+        flagAtualizar: false,
+        validacaoDoForm: false,
+        money: {
+          decimal: ',',
+          thousands: '.',
+          prefix: 'R$ ',
+
+          precision: 2,
+          masked: false
+        }
       }
     },
     created() {
       this.buscarProdutos(this.$router.app._route.params.id);
     },
+    computed: {
+      validation() {
+        if (this.produto.nome.length === 0) {
+          this.validacaoDoForm = null;
+          return null;
+        } else if (this.produto.nome.length < 20) {
+          this.validacaoDoForm = true;
+          return true;
+        }
+        this.validacaoDoForm = false;
+        return false;
+      },
+      validationPreco() {
+        if (this.produto.preco < 0) {
+          return false;
+        }
+        if (this.produto.preco > 0.001) {
+          return true;
+        }
+      }
+    },
     methods: {
       buscarProdutos(id) {
+
         this.categoriaId = id;
         this.$http.get('http://localhost:8082/categorias/' + id).then(response => {
           this.corpoDosProdutos = response.body;
-          this.totalRows = this.corpoDosProdutos.produtos.length;
+          this.totalDeLinhas = this.corpoDosProdutos.produtos.length;
         });
+
       },
       buscarProdutosNovamente() {
 
         this.$http.get('http://localhost:8082/categorias/' + this.categoriaId).then(response => {
           this.corpoDosProdutos = response.body;
-          this.totalRows = this.corpoDosProdutos.produtos.length;
+          this.totalDeLinhas = this.corpoDosProdutos.produtos.length;
         });
       },
       cadastrarProduto() {
+        if (!this.validacaoDoForm) {
+          return;
+        }
         this.resetAlert();
         this.$http.post('http://localhost:8082/categorias/' + this.categoriaId + '/produtos', this.produto).then(response => {
           this.fecharModal(2);
@@ -265,11 +330,11 @@
       },
       fecharModal(opcaoDeModal) {
         if (opcaoDeModal === 1) {
-          this.$refs['modal-atualizar-produto'].hide()
+          this.$refs['modal-atualizar-produto'].hide();
         } else if (opcaoDeModal === 2) {
-          this.$refs['modal-cadastrar-produto'].hide()
+          this.$refs['modal-cadastrar-produto'].hide();
         } else if (opcaoDeModal === 3) {
-          this.$refs['modal-excluir-produto'].hide()
+          this.$refs['modal-excluir-produto'].hide();
         }
       },
       limparInputDoModal() {
@@ -296,11 +361,11 @@
         this.flagAtualizar = false;
       },
       onFiltered(filteredItems) {
-        this.totalRows = filteredItems.length;
-        this.currentPage = 1
+        this.totalDeLinhas = filteredItems.length;
+        this.paginaAtual = 1;
       },
       setSegundos(segundos) {
-        this.alertSucesso = segundos
+        this.alertSucesso = segundos;
       },
       setSegundosError(segundos) {
         this.alertError = segundos;
@@ -309,40 +374,4 @@
   }
 </script>
 
-<style scoped>
-  .botao-produtos {
-    color: white;
-    border: none;
-  }
-
-  .botao-criar-categoria {
-    background-color: green;
-  }
-
-  .grupo-botao-modal {
-    float: right;
-  }
-
-  .botao-cadastro {
-    float: right;
-    margin-bottom: 2%;
-  }
-
-  .titulo-tabela {
-    float: left;
-  }
-
-  .card {
-    margin-top: 10%;
-    position: relative;
-  }
-
-  .barra-de-paginas {
-    position: relative;
-  }
-
-  .row {
-    margin-right: 0px;
-  }
-
-</style>
+<style src="../temas/style.css"></style>

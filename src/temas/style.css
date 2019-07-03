@@ -1,0 +1,49 @@
+th {
+  width: 245px;
+}
+.botao-categoria {
+  color: white;
+  border: none;
+}
+
+.botao-criar-categoria {
+  background-color: green;
+}
+
+.grupo-botao-modal {
+  float: right;
+}
+
+.botao-cadastro {
+  float: right;
+}
+
+.botao-voltar {
+  margin:6px 0px 0px auto
+}
+
+.titulo-tabela {
+  float: left;
+}
+
+.card {
+  position: relative;
+  margin-top: 10%;
+}
+
+.barra-de-paginas {
+  position: relative;
+}
+
+.row {
+  margin-right: 0px;
+  margin-top: 21px;
+}
+
+
+.botao-produtos {
+  color: white;
+  border: none;
+}
+
+
