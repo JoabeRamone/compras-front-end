@@ -272,7 +272,7 @@
       buscarProdutos(id) {
 
         this.categoriaId = id;
-        this.$http.get('http://localhost:8082/categorias/' + id).then(response => {
+        this.$http.get('https://controle-produtos-app.herokuapp.com/categorias/' + id).then(response => {
           this.corpoDosProdutos = response.body;
           this.totalDeLinhas = this.corpoDosProdutos.produtos.length;
         });
@@ -280,7 +280,7 @@
       },
       buscarProdutosNovamente() {
 
-        this.$http.get('http://localhost:8082/categorias/' + this.categoriaId).then(response => {
+        this.$http.get('https://controle-produtos-app.herokuapp.com/categorias/' + this.categoriaId).then(response => {
           this.corpoDosProdutos = response.body;
           this.totalDeLinhas = this.corpoDosProdutos.produtos.length;
         });
@@ -290,7 +290,7 @@
           return;
         }
         this.resetAlert();
-        this.$http.post('http://localhost:8082/categorias/' + this.categoriaId + '/produtos', this.produto).then(response => {
+        this.$http.post('https://controle-produtos-app.herokuapp.com/categorias/' + this.categoriaId + '/produtos', this.produto).then(response => {
           this.fecharModal(2);
           this.limparInputDoModal();
           this.buscarProdutosNovamente();
@@ -302,7 +302,7 @@
       },
       atualizarProduto() {
         this.resetAlert();
-        this.$http.put('http://localhost:8082/categorias/' + this.categoriaId + '/produtos', this.produto).then(response => {
+        this.$http.put('https://controle-produtos-app.herokuapp.com/categorias/' + this.categoriaId + '/produtos', this.produto).then(response => {
           this.fecharModal(1);
           this.buscarProdutosNovamente();
           this.limparInputDoModal();
@@ -314,7 +314,7 @@
       },
       excluirProduto() {
         this.resetAlert();
-        this.$http.delete('http://localhost:8082/categorias/' + this.categoriaId + '/produtos', {body: this.produto}).then(response => {
+        this.$http.delete('https://controle-produtos-app.herokuapp.com/categorias/' + this.categoriaId + '/produtos', {body: this.produto}).then(response => {
           this.fecharModal(3);
           this.buscarProdutosNovamente();
           this.showAlertSucesso(2);

@@ -213,7 +213,7 @@
     },
     methods: {
       buscarCategorias() {
-        this.$http.get('http://localhost:8082/categorias').then(response => {
+        this.$http.get('https://controle-produtos-app.herokuapp.com/categorias').then(response => {
           this.corpoDaCategoria = response.body;
           this.totalRows = this.corpoDaCategoria.length;
         });
@@ -239,7 +239,7 @@
           return
         }
         this.resetAlert();
-        this.$http.post('http://localhost:8082/categorias', this.categoria).then(response => {
+        this.$http.post('https://controle-produtos-app.herokuapp.com/categorias', this.categoria).then(response => {
           this.fecharModal(2);
           this.limparInputDoModal();
           this.buscarCategorias();
