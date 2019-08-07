@@ -213,7 +213,7 @@
     },
     methods: {
       buscarCategorias() {
-        this.$http.get('https://controle-produtos-app.herokuapp.com/categorias').then(response => {
+        this.$http.get('http://localhost:8082/categorias').then(response => {
           this.corpoDaCategoria = response.body;
           this.totalRows = this.corpoDaCategoria.length;
         });
@@ -255,7 +255,7 @@
       },
       removerCategoria() {
         this.resetAlert();
-        this.$http.delete('https://controle-produtos-app.herokuapp.com/categorias/' + this.categoria.id).then(response => {
+        this.$http.delete('http://localhost:8082/categorias/' + this.categoria.id).then(response => {
           this.fecharModal(3);
           this.buscarCategorias();
           this.limparInputDoModal();
@@ -267,7 +267,7 @@
       },
       atualizarNomeCategoria() {
         this.resetAlert();
-        this.$http.put('https://controle-produtos-app.herokuapp.com/categorias', this.categoria).then(response => {
+        this.$http.put('http://localhost:8082/categorias', this.categoria).then(response => {
           this.fecharModal(1);
           this.buscarCategorias();
           this.showAlertSucesso(3);
